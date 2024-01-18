@@ -47,7 +47,7 @@ class User(UserMixin, db.Model):
     name = db.Column(db.String(250), nullable=False)
     password = db.Column(db.String(250), nullable=False)
     email = db.Column(db.String(250), unique=True, nullable=False)
-    # role = db.Column(db.String(50), default='renter', nullable=False)
+    role = db.Column(db.String(50), default='renter', nullable=False)
     cars = relationship("Car", back_populates="owner")
     comments = relationship("Comment", back_populates="owner_comments")
     reservations = relationship("Reservation", back_populates="user")
@@ -78,6 +78,22 @@ class Car(db.Model):
     body = db.Column(db.Text, nullable=False)
     is_rented = db.Column(db.Boolean, default=False, nullable=False)
     img_url = db.Column(db.String(250), nullable=False)
+
+# Comment Model
+
+
+class Comment(db.Model):
+    __tablename__ = "comments"
+    id = db.Column(db.Integer, primary_key=True)
+    owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    car_id = db.Column(db.Integer, db.ForeignKey('cars.id'))
+    owner_comments = relationship("User", back_populates="comments")
+    car_comments = relationship("Car", back_populates="comments")
+    text = db.Column(db.Text, nullable=False)
+
+# Rent Model
+
+db.create_all()
     
 #User
 @app.route('/register', methods=['GET', 'POST'])
@@ -125,3 +141,26 @@ def get_all_cars():
     if current_user == admin:
         is_admin = True
     return render_template("index.html", all_cars=cars, logged_in=current_user.is_authenticated, admin=is_admin)
+
+@app.route("/post/<int:car_id>", methods=['GET', 'POST'])
+def show_post(car_id):
+    form = CommentForm()
+    is_admin = False
+    if current_user.is_authenticated and current_user.role == 'uploader':
+        is_admin = True
+    car = Car.query.get(car_id)
+    if form.validate_on_submit():
+        if not current_user.is_authenticated:
+            flash(message="To leave a comment, you need to login first!",
+                  category="error")
+            return redirect(url_for('login'))
+        else:
+            comment = Comment(
+                text=form.user_comment.data,
+                owner_comments=current_user,
+                car_comments=car,
+            )
+            db.session.add(comment)
+            db.session.commit()
+            form.user_comment.data = ''
+    return render_template("post.html", car=car, logged_in=current_user.is_authenticated, admin=is_admin, form=form)
