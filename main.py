@@ -51,3 +51,14 @@ class User(UserMixin, db.Model):
     cars = relationship("Car", back_populates="owner")
     comments = relationship("Comment", back_populates="owner_comments")
     reservations = relationship("Reservation", back_populates="user")
+
+class Reservation(db.Model):
+    __tablename__ = "reservations"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    car_id = db.Column(db.Integer, db.ForeignKey('cars.id'))
+    start_date = db.Column(db.DateTime, nullable=False)
+    end_date = db.Column(db.DateTime, nullable=False)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
+    user = relationship("User", back_populates="reservations")
+    car = relationship("Car", back_populates="reservations")
