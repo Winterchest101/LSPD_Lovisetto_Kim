@@ -49,7 +49,7 @@ forms.py: Has classes with info about users and cars.
 plaintext
 Copy code
 car-rental-platform/
-│
+```bash
 ├── Templates/
 │   ├── index.html
 │   ├── upload_car.html
@@ -64,6 +64,7 @@ car-rental-platform/
 ├── main.py
 ├── forms.py
 └── requirements.txt
+```
 
 ### Database
 The main storage for this project is called car.db. Just keep an eye on your database as your app grows.
