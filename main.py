@@ -79,7 +79,7 @@ class Car(db.Model):
     is_rented = db.Column(db.Boolean, default=False, nullable=False)
     img_url = db.Column(db.String(250), nullable=False)
     
-#user
+#User
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = CreateNewUser()
@@ -98,3 +98,20 @@ def register():
             login_user(user)
             return redirect(url_for('get_all_cars'))
     return render_template("register.html", form=form, logged_in=current_user.is_authenticated)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginUser()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            if check_password_hash(user.password, form.password.data):
+                login_user(user)
+                return redirect(url_for('get_all_cars'))
+            else:
+                flash(message="Password is invalid, try again!", category="error")
+                return redirect(url_for('login'))
+        else:
+            flash(message="There is no user with that email, try again!", category="error")
+            return redirect(url_for('login'))
+    return render_template("login.html", form=form, logged_in=current_user.is_authenticated)
