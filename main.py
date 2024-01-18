@@ -40,3 +40,14 @@ def get_user(id):
     return User.query.get(int(id))
 
 Base = declarative_base()
+
+class User(UserMixin, db.Model):
+    __tablename__ = "users"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(250), nullable=False)
+    password = db.Column(db.String(250), nullable=False)
+    email = db.Column(db.String(250), unique=True, nullable=False)
+    # role = db.Column(db.String(50), default='renter', nullable=False)
+    cars = relationship("Car", back_populates="owner")
+    comments = relationship("Comment", back_populates="owner_comments")
+    reservations = relationship("Reservation", back_populates="user")
