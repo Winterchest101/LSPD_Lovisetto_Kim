@@ -15,7 +15,7 @@ class CreateCarForm(FlaskForm):
     body = CKEditorField("Car Content", validators=[DataRequired()])
     submit = SubmitField("Submit Post")
 
-    class CreateNewUser(FlaskForm):
+class CreateNewUser(FlaskForm):
     name = StringField("Username", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
