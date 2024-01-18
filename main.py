@@ -132,6 +132,11 @@ def login():
             return redirect(url_for('login'))
     return render_template("login.html", form=form, logged_in=current_user.is_authenticated)
 
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('get_all_cars'))
+
 # Cars
 @app.route('/')
 def get_all_cars():
@@ -164,3 +169,37 @@ def show_post(car_id):
             db.session.commit()
             form.user_comment.data = ''
     return render_template("post.html", car=car, logged_in=current_user.is_authenticated, admin=is_admin, form=form)
+
+# Pages
+@app.route("/your_rents")
+def your_renting():
+    return render_template("your_rents.html", logged_in=current_user.is_authenticated)
+
+
+@app.route("/rented")
+def rented():
+    cars = Car.query.filter_by(is_rented=True)
+    is_admin = False
+    if current_user.is_authenticated and current_user.role == 'uploader':
+        is_admin = True
+    return render_template("rented.html", all_cars=cars, logged_in=current_user.is_authenticated, admin=is_admin)
+
+@app.route("/new-post", methods=['GET', 'POST'])
+@admin
+def add_new_post():
+    form = CreateCarForm()
+    if form.validate_on_submit():
+        new_post = Car(
+            mark=form.Mark.data,
+            model=form.Model.data,
+            body=form.body.data,
+            img_url=form.img_url.data,
+            owner=current_user,
+            transmission=form.Transmission.data,
+            category=form.Category.data,
+            date=date.today().strftime("%B %d, %Y")
+        )
+        db.session.add(new_post)
+        db.session.commit()
+        return redirect(url_for("get_all_cars"))
+    return render_template("make-post.html", form=form, logged_in=current_user.is_authenticated)
