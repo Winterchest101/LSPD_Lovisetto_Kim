@@ -16,6 +16,8 @@
 ##### Installation
 ##### To run the Car Rental Platform on your computer, follow these simple steps:
 
+(Visual Studio Code tool was used to create and run this web app. We recommend using this tool to try our app)
+
 ## **Usage** 
 1. Clone the repository and navigate in the directory:
 
@@ -67,10 +69,8 @@ car-rental-platform/
 ```
 
 ### Database
-The main storage for this project is called car.db. Just keep an eye on your database as your app grows.
+The main storage for this project is called "car.db". Just keep an eye on your database as your app grows.
 
-Contributing
+### Contributing
 We'd love your help! If you find issues or have ideas, tell us by opening an issue or making a pull request.
 
-License
-This project is licensed under the MIT License. Feel free to use, change, and share the code. Don't forget to include the original license text in your copy.
