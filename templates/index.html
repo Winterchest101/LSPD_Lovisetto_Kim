@@ -1,0 +1,50 @@
+{% include "header.html" %}
+
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('https://cdn.pixabay.com/photo/2018/08/14/13/23/ocean-3605547_1280.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="site-heading">
+            <h1>Rent-a-Car</h1>
+            <span class="subheading">Find the perfect Car!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="post-preview">
+          <a href="{{ url_for('show_post', car_id=car.id) }}">
+            <h2 class="post-title">
+              {{car.mark}}
+            </h2>
+            <h3 class="post-subtitle">
+              {{car.model}}
+            </h3>
+          </a>
+          <p class="post-meta">Posted by
+            <a href="#">{{car.owner.name}}</a>
+            on {{car.date}}
+            <a href="{{url_for('delete_post', car_id=car.id) }}">✘</a>
+          </p>
+          <img src="{{car.img_url}}" alt="car image" width="300" height="222">
+        </div>
+        <hr>
+
+
+        <!-- New Post -->
+        <div class="clearfix">
+            <a class="btn btn-primary float-right" href="{{url_for('add_new_post')}}">Upload New Car</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr>
+
+{% include "footer.html" %}
