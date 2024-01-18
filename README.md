@@ -19,19 +19,22 @@
 ## **Usage** 
 1. Clone the repository and navigate in the directory:
 
-'''bash
+```bash
 git clone REPO_URL
 cd LSPD FINAL\LSPD_Lovisetto_Kim
+```
 
 2. Install what's needed:
 
-'''bash
+```bash
 pip install -r requirements.txt
+```
 
 3. Run the application:
 
-'''bash
+```bash
 python main.py
+```
 
 4. Go to the browser and insert the address that you can find in the terminal.
 
