@@ -258,3 +258,44 @@ def delete_post(car_id):
     db.session.commit()
     return redirect(url_for('get_all_cars'))
     
+    
+# Renting
+
+
+@app.route("/rent/<int:car_id>")
+def rent_car(car_id):
+    car = Car.query.get(car_id)
+    car.is_rented = True
+    db.session.commit()
+    return redirect(url_for("show_post", car_id=car.id))
+
+    return render_template("make-post.html", form=edit_form, logged_in=current_user.is_authenticated, car=car)
+
+
+@app.route("/reserve/<int:car_id>", methods=['GET', 'POST'])
+@login_required
+def reserve_car(car_id):
+    car = Car.query.get(car_id)
+    if car.is_rented:
+        flash("Car is already rented.", category='error')
+        return redirect(url_for("get_all_cars"))
+
+    form = ReservationForm()
+    if form.validate_on_submit():
+        reservation = Reservation(
+            user=current_user,
+            car=car,
+            start_date=form.start_date.data,
+            end_date=form.end_date.data
+        )
+        car.is_rented = True
+        db.session.add(reservation)
+        db.session.commit()
+        flash("Car reserved successfully!", category='success')
+        return redirect(url_for("get_all_cars"))
+
+    return render_template("reserve-car.html", form=form, car=car, logged_in=current_user.is_authenticated)
+
+
+if __name__ == "__main__":
+    app.run(debug=True, port=3000)
