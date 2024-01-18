@@ -1,10 +1,12 @@
 # LSPD_Lovisetto_Kim
 
 
-# **Car Rental Website:**
-### Welcome to the Car Rental Website project! This web application allows car owners to upload information about their cars, and users can browse through the available cars and rent them for a specified period. The backend is built using Flask, and the frontend is designed using Bootstrap.
+# **Car Rental Platform**
 
-## **Table of Contents:**
+## Overview
+#### Welcome to the Car Rental Platform project! This user-friendly web application allows car owners to easily share details about their cars. At the same time, users can effortlessly browse available cars and rent them for specific periods. Our backend uses Flask, while the frontend is designed with Bootstrap for a sleek look.
+
+**Table of Contents**
 ##### Installation
 ##### Usage
 ##### Folder Structure
@@ -12,41 +14,38 @@
 ##### Contributing
 ##### License
 ##### Installation
-##### To run the Car Rental Website locally, follow these steps :
+##### To run the Car Rental Platform on your computer, follow these simple steps:
 
-### **Clone the repository:**
+## **Usage** 
+1. Clone the repository and navigate in the directory:
 
-bash
-Copy code
-git clone https://github.com/your-username/car-rental-website.git
-Navigate to the project directory:
+'''bash
+git clone REPO_URL
+cd LSPD FINAL\LSPD_Lovisetto_Kim
 
-bash
-Copy code
-cd car-rental-website
-Install the required dependencies:
+2. Install what's needed:
 
-bash
-Copy code
+'''bash
 pip install -r requirements.txt
-Usage
-Run the application:
 
-bash
-Copy code
+3. Run the application:
+
+'''bash
 python main.py
-Open your web browser and visit http://localhost:5000.
 
-You can now explore the website, sign up, upload information about your car, and rent cars from other users.
+4. Go to the browser and insert the address that you can find in the terminal.
 
-### **Folder Structure**
-Templates: Contains all the HTML files for the frontend pages.
-Static: Contains all design-related files, utilizing Bootstrap for styling.
-main.py: The main Python file for the Flask application.
-forms.py: Contains classes with information about users and cars.
-scss
+Explore the platform, sign up, share info about your car, and easily rent cars from others.
+
+## Folder Structure
+
+Templates: All the pages you see are here.
+Static: Design-related files, including Bootstrap styles.
+main.py: The main program that makes everything work.
+forms.py: Has classes with info about users and cars.
+plaintext
 Copy code
-car-rental-website/
+car-rental-platform/
 │
 ├── Templates/
 │   ├── index.html
@@ -63,11 +62,11 @@ car-rental-website/
 ├── forms.py
 └── requirements.txt
 
-### **Database**
-The main database for this project is named car.db. Make sure to manage your database and migrations appropriately as your application evolves.
+### Database
+The main storage for this project is called car.db. Just keep an eye on your database as your app grows.
 
-### **Contributing**
-Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or create a pull request.
+Contributing
+We'd love your help! If you find issues or have ideas, tell us by opening an issue or making a pull request.
 
-### **License**
-This project is licensed under the MIT License. Feel free to use, modify, and distribute the code. Remember to include the original license text in your copy of the code.
+License
+This project is licensed under the MIT License. Feel free to use, change, and share the code. Don't forget to include the original license text in your copy.
