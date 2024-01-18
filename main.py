@@ -203,3 +203,58 @@ def add_new_post():
         db.session.commit()
         return redirect(url_for("get_all_cars"))
     return render_template("make-post.html", form=form, logged_in=current_user.is_authenticated)
+
+@app.route("/new-post", methods=['GET', 'POST'])
+@admin
+def add_new_post():
+    form = CreateCarForm()
+    if form.validate_on_submit():
+        new_post = Car(
+            mark=form.Mark.data,
+            model=form.Model.data,
+            body=form.body.data,
+            img_url=form.img_url.data,
+            owner=current_user,
+            transmission=form.Transmission.data,
+            category=form.Category.data,
+            date=date.today().strftime("%B %d, %Y")
+        )
+        db.session.add(new_post)
+        db.session.commit()
+        return redirect(url_for("get_all_cars"))
+    return render_template("make-post.html", form=form, logged_in=current_user.is_authenticated)
+
+
+@app.route("/edit-post/<int:car_id>", methods=['GET', 'POST'])
+@admin
+def edit_post(car_id):
+    car = Car.query.get(car_id)
+    edit_form = CreateCarForm(
+        Mark=car.mark,
+        Model=car.model,
+        body=car.body,
+        category=car.category,
+        transmission=car.transmission,
+        img_url=car.img_url,
+    )
+    if edit_form.validate_on_submit():
+        car.mark = edit_form.Mark.data
+        car.model = edit_form.Model.data
+        car.body = edit_form.body.data
+        car.img_url = edit_form.img_url.data
+        car.category = edit_form.Category.data
+        car.transmission = edit_form.Transmission.data
+        db.session.commit()
+        return redirect(url_for("show_post", car_id=car.id))
+
+    return render_template("make-post.html", form=edit_form, logged_in=current_user.is_authenticated, car=car)
+
+
+@app.route("/delete/<int:car_id>")
+@admin
+def delete_post(car_id):
+    post_to_delete = Car.query.get(car_id)
+    db.session.delete(post_to_delete)
+    db.session.commit()
+    return redirect(url_for('get_all_cars'))
+    
