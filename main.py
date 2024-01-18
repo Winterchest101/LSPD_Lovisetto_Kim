@@ -62,3 +62,19 @@ class Reservation(db.Model):
     is_active = db.Column(db.Boolean, default=True, nullable=False)
     user = relationship("User", back_populates="reservations")
     car = relationship("Car", back_populates="reservations")
+
+class Car(db.Model):
+    __tablename__ = "cars"
+    id = db.Column(db.Integer, primary_key=True)
+    owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    owner = relationship("User", back_populates="cars")
+    comments = relationship("Comment", back_populates="car_comments")
+    reservations = relationship("Reservation", back_populates="car")
+    mark = db.Column(db.String(250), unique=True, nullable=False)
+    model = db.Column(db.String(250), nullable=False)
+    category = db.Column(db.String(250), nullable=False)
+    transmission = db.Column(db.String(250), nullable=False)
+    date = db.Column(db.String(250), nullable=False)
+    body = db.Column(db.Text, nullable=False)
+    is_rented = db.Column(db.Boolean, default=False, nullable=False)
+    img_url = db.Column(db.String(250), nullable=False)
