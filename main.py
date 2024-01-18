@@ -195,6 +195,9 @@ def show_post(car_id):
 def your_renting():
     return render_template("your_rents.html", logged_in=current_user.is_authenticated)
 
+@app.route("/about")
+def about():
+    return render_template("about.html")
 
 @app.route("/rented")
 def rented():
