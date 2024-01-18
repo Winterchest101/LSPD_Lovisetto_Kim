@@ -6,19 +6,20 @@
 ## Overview
 #### Welcome to the Car Rental Platform project! This user-friendly web application allows car owners to easily share details about their cars. At the same time, users can effortlessly browse available cars and rent them for specific periods. Our backend uses Flask, while the frontend is designed with Bootstrap for a sleek look.
 
-**Table of Contents**
-##### Installation
-##### Usage
-##### Folder Structure
-##### Database
-##### Contributing
-##### License
-##### Installation
-##### To run the Car Rental Platform on your computer, follow these simple steps:
+**Table of Contents:**
+##### -Installation
+##### -Usage
+##### -Folder Structure
+##### -Database
+##### -Contributing
+##### -License
+##### -Installation
 
 (Visual Studio Code tool was used to create and run this web app. We recommend using this tool to try our app)
 
 ## **Usage** 
+##### To run the Car Rental Platform on your computer, follow these simple steps:
+
 1. Clone the repository and navigate in the directory:
 
 ```bash
