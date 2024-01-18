@@ -115,3 +115,13 @@ def login():
             flash(message="There is no user with that email, try again!", category="error")
             return redirect(url_for('login'))
     return render_template("login.html", form=form, logged_in=current_user.is_authenticated)
+
+# Cars
+@app.route('/')
+def get_all_cars():
+    cars = Car.query.filter_by(is_rented=False)
+    is_admin = False
+    admin = User.query.filter_by(id=1).first()
+    if current_user == admin:
+        is_admin = True
+    return render_template("index.html", all_cars=cars, logged_in=current_user.is_authenticated, admin=is_admin)
