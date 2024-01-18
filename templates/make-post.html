@@ -1,0 +1,87 @@
+{% extends 'bootstrap/base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+{% include "header.html" %}
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('{{ url_for('static', filename='img/edit-bg.jpg')}}')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="page-heading">
+            {% if is_edit: %}
+            <h1>Edit Post</h1>
+            {% else: %}
+            <h1>New Upload</h1>
+            {% endif %}
+            <span class="subheading">Upload all information about the car</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        {{ ckeditor.load() }}
+        {{ ckeditor.config(name='body') }}
+
+      {{ wtf.form_errors(form) }}
+<form method="post" novalidate>
+  {{ form.hidden_tag() }}
+  {{ form.csrf_token }}
+
+  {{ form.Mark.label }}
+  {{ form.Mark(class="form-control") }}
+
+  {{ form.Model.label }}
+  {{ form.Model(class="form-control") }}
+
+  {{ form.Category.label }}
+  <select class="form-control" id="{{ form.Category.id }}" name="{{ form.Category.name }}">
+    {% for choice, label in form.Category.choices %}
+      {% if car %}
+        {% if choice == car.category %}
+          <option value="{{ choice }}" selected>{{ label }}</option>
+        {% else %}
+          <option value="{{ choice }}">{{ label }}</option>
+        {% endif %}
+      {% else %}
+        <option value="{{ choice }}">{{ label }}</option>
+      {% endif %}
+    {% endfor %}
+  </select>
+
+  {{ form.Transmission.label }}
+  <select class="form-control" id="{{ form.Transmission.id }}" name="{{ form.Transmission.name }}">
+    {% for choice, label in form.Transmission.choices %}
+      {% if car %}
+        {% if choice == car.transmission %}
+          <option value="{{ choice }}" selected>{{ label }}</option>
+        {% else %}
+          <option value="{{ choice }}">{{ label }}</option>
+        {% endif %}
+      {% else %}
+        <option value="{{ choice }}">{{ label }}</option>
+      {% endif %}
+    {% endfor %}
+  </select>
+
+  {{ form.img_url.label }}
+  {{ form.img_url(class="form-control") }}
+
+  {{ form.body.label }}
+  {{ form.body(class="form-control") }}
+
+  {{ form.submit(class="btn btn-primary") }}
+</form>
+
+
+      </div>
+    </div>
+  </div>
+
+{% include "footer.html" %}
+{% endblock %}

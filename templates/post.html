@@ -1,0 +1,79 @@
+{% include "header.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('{{car.img_url}}')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+            <h1>{{car.title}}</h1>
+            <h2 class="subheading">{{car.subtitle}}</h2>
+            <span class="meta">Uploaded by
+              <a href="#">{{car.owner.name}}</a>
+              on {{car.date}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            Mark: {{ car.mark|safe }}<br>
+            Model: {{ car.model|safe }}<br>
+            Category: {{ car.category|safe }}<br>
+            Transmission: {{ car.transmission|safe }}<br>
+            Description: {{ car.body|safe }}<br>
+          <hr>
+
+            <div class="clearfix">
+              {% if admin: %}
+                <a class="btn btn-primary float-right" href="{{url_for('edit_post', car_id=car.id)}}">Edit Ad</a>
+              {% else %}
+                {% if car.is_rented %}
+                  {% if car.reservations[0].user_id == current_user.id %}
+                   This car is rented by you till {{car.reservations[0].end_date.strftime('%Y-%m-%d')}}!
+                  {% else %}
+                    The car is already rented by {{car.reservations[0].user.name}} till {{car.reservations[0].end_date.strftime('%Y-%m-%d')}}!
+                  {% endif %}
+                  <hr>
+                {% else %}
+                   <a class="btn btn-danger float-right" href="{{url_for('reserve_car', car_id=car.id)}}">Rent {{car.is_rented}}</a>
+                {% endif %}
+              {% endif %}
+            </div>
+
+
+
+<!--           Comments Area -->
+        {{ ckeditor.load() }}
+        {{ ckeditor.config(name='user_comment') }}
+        {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+          <div class="col-lg-8 col-md-10 mx-auto comment">
+              <ul class="commentList">
+                {%for comment in car.comments%}
+                <li>
+                    <div class="commenterImage">
+                      <img src="{{comment.owner_comments.email | gravatar}}" />
+                    </div>
+                    <div class="commentText">
+                      <p>{{comment.text| safe}}</p>
+                      <span class="date sub-text">{{comment.owner_comments.name}}</span>
+                    </div>
+                </li>
+                {%endfor%}
+              </ul>
+            </div>
+
+
+          </div>
+      </div>
+    </div>
+  </article>
+
+  <hr>
+{% include "footer.html" %}
