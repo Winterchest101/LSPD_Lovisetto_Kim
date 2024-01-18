@@ -78,3 +78,23 @@ class Car(db.Model):
     body = db.Column(db.Text, nullable=False)
     is_rented = db.Column(db.Boolean, default=False, nullable=False)
     img_url = db.Column(db.String(250), nullable=False)
+    
+#user
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = CreateNewUser()
+    if form.validate_on_submit():
+        if User.query.filter_by(email=form.email.data).first():
+            flash("You already signed up with that email! Try to login instead!", category='error')
+            return redirect(url_for('login'))
+        else:
+            user = User(
+                name=form.name.data,
+                password=generate_password_hash(password=form.password.data, method='pbkdf2:sha256', salt_length=8),
+                email=form.email.data,
+            )
+            db.session.add(user)
+            db.session.commit()
+            login_user(user)
+            return redirect(url_for('get_all_cars'))
+    return render_template("register.html", form=form, logged_in=current_user.is_authenticated)
