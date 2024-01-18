@@ -32,7 +32,7 @@
 
             <div class="clearfix">
               {% if admin: %}
-                <a class="btn btn-primary float-right" href="{{url_for('edit_post', car_id=car.id)}}">Edit Ad</a>
+                <a class="btn btn-primary float-right" href="{{url_for('edit_post', car_id=car.id)}}">Edit Post</a>
               {% else %}
                 {% if car.is_rented %}
                   {% if car.reservations[0].user_id == current_user.id %}
@@ -42,7 +42,7 @@
                   {% endif %}
                   <hr>
                 {% else %}
-                   <a class="btn btn-danger float-right" href="{{url_for('reserve_car', car_id=car.id)}}">Rent {{car.is_rented}}</a>
+                   <a class="btn btn-danger float-right" href="{{url_for('reserve_car', car_id=car.id)}}">Rent</a>
                 {% endif %}
               {% endif %}
             </div>

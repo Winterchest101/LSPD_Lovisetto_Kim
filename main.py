@@ -1,8 +1,17 @@
 from flask import Flask, render_template, redirect, url_for, flash, jsonify, request, abort
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
+from datetime import date
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import relationship, Session
+from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
+from forms import CreateCarForm, CreateNewUser, LoginUser, CommentForm, ReservationForm
 from flask_gravatar import Gravatar
+from sqlalchemy import create_engine
 from functools import wraps
+from sqlalchemy.ext.declarative import declarative_base
+import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ewrfnirawu4hiqufrnwa2ne'
@@ -19,20 +28,20 @@ gravatar = Gravatar(app,
 
 def admin(function):
     @wraps(function)
-    def fun(*args, **kwargs):
-        if current_user.id == 1:
+    def wrapper(*args, **kwargs):
+        if current_user.is_authenticated and current_user.role == 'uploader':
             return function(*args, **kwargs)
         else:
             return abort(403)
-    return fun
+    return wrapper
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL?sslmode=require", "sqlite:///blog.db")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL?sslmode=require", "sqlite:///car.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-engine = create_engine(os.getenv("DATABASE_URL", "sqlite:///blog.db"))
+engine = create_engine(os.getenv("DATABASE_URL", "sqlite:///car.db"))
 session = Session(engine)
 
 @login_manager.user_loader
@@ -79,9 +88,10 @@ class Car(db.Model):
     is_rented = db.Column(db.Boolean, default=False, nullable=False)
     img_url = db.Column(db.String(250), nullable=False)
 
+    def create_dict(self):
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
+
 # Comment Model
-
-
 class Comment(db.Model):
     __tablename__ = "comments"
     id = db.Column(db.Integer, primary_key=True)
@@ -91,11 +101,15 @@ class Comment(db.Model):
     car_comments = relationship("Car", back_populates="comments")
     text = db.Column(db.Text, nullable=False)
 
+
 # Rent Model
 
 db.create_all()
-    
-#User
+
+
+
+
+# User
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = CreateNewUser()
@@ -108,12 +122,15 @@ def register():
                 name=form.name.data,
                 password=generate_password_hash(password=form.password.data, method='pbkdf2:sha256', salt_length=8),
                 email=form.email.data,
+                role=form.role.data
             )
             db.session.add(user)
             db.session.commit()
             login_user(user)
+            flash("Successfully registered!", category='error')
             return redirect(url_for('get_all_cars'))
     return render_template("register.html", form=form, logged_in=current_user.is_authenticated)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -132,20 +149,23 @@ def login():
             return redirect(url_for('login'))
     return render_template("login.html", form=form, logged_in=current_user.is_authenticated)
 
+
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('get_all_cars'))
+
+
 
 # Cars
 @app.route('/')
 def get_all_cars():
     cars = Car.query.filter_by(is_rented=False)
     is_admin = False
-    admin = User.query.filter_by(id=1).first()
-    if current_user == admin:
+    if current_user.is_authenticated and current_user.role == 'uploader':
         is_admin = True
     return render_template("index.html", all_cars=cars, logged_in=current_user.is_authenticated, admin=is_admin)
+
 
 @app.route("/post/<int:car_id>", methods=['GET', 'POST'])
 def show_post(car_id):
@@ -156,8 +176,7 @@ def show_post(car_id):
     car = Car.query.get(car_id)
     if form.validate_on_submit():
         if not current_user.is_authenticated:
-            flash(message="To leave a comment, you need to login first!",
-                  category="error")
+            flash(message="To leave a comment, you need to login first!", category="error")
             return redirect(url_for('login'))
         else:
             comment = Comment(
@@ -169,6 +188,7 @@ def show_post(car_id):
             db.session.commit()
             form.user_comment.data = ''
     return render_template("post.html", car=car, logged_in=current_user.is_authenticated, admin=is_admin, form=form)
+
 
 # Pages
 @app.route("/your_rents")
@@ -184,25 +204,6 @@ def rented():
         is_admin = True
     return render_template("rented.html", all_cars=cars, logged_in=current_user.is_authenticated, admin=is_admin)
 
-@app.route("/new-post", methods=['GET', 'POST'])
-@admin
-def add_new_post():
-    form = CreateCarForm()
-    if form.validate_on_submit():
-        new_post = Car(
-            mark=form.Mark.data,
-            model=form.Model.data,
-            body=form.body.data,
-            img_url=form.img_url.data,
-            owner=current_user,
-            transmission=form.Transmission.data,
-            category=form.Category.data,
-            date=date.today().strftime("%B %d, %Y")
-        )
-        db.session.add(new_post)
-        db.session.commit()
-        return redirect(url_for("get_all_cars"))
-    return render_template("make-post.html", form=form, logged_in=current_user.is_authenticated)
 
 @app.route("/new-post", methods=['GET', 'POST'])
 @admin
@@ -243,7 +244,7 @@ def edit_post(car_id):
         car.body = edit_form.body.data
         car.img_url = edit_form.img_url.data
         car.category = edit_form.Category.data
-        car.transmission = edit_form.Transmission.data
+        car.transmission=edit_form.Transmission.data
         db.session.commit()
         return redirect(url_for("show_post", car_id=car.id))
 
@@ -257,11 +258,8 @@ def delete_post(car_id):
     db.session.delete(post_to_delete)
     db.session.commit()
     return redirect(url_for('get_all_cars'))
-    
-    
+
 # Renting
-
-
 @app.route("/rent/<int:car_id>")
 def rent_car(car_id):
     car = Car.query.get(car_id)
@@ -295,7 +293,6 @@ def reserve_car(car_id):
         return redirect(url_for("get_all_cars"))
 
     return render_template("reserve-car.html", form=form, car=car, logged_in=current_user.is_authenticated)
-
-
 if __name__ == "__main__":
     app.run(debug=True, port=3000)
+

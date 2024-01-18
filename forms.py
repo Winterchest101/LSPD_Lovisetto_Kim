@@ -19,6 +19,8 @@ class CreateNewUser(FlaskForm):
     name = StringField("Username", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
+    role_choices = [("uploader", "Uploader"), ("renter", "Renter")]
+    role = SelectField("Role", choices=role_choices, validators=[DataRequired()])
     submit = SubmitField("Sign up")
 
 

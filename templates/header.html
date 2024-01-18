@@ -53,14 +53,14 @@
           </li>
           {% endif %}
           {% if current_user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('your_renting') }}">Your Renting</a>
-          </li>
-
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('your_renting') }}">Your Renting</a>
+            </li>
+          {% endif %}
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('rented') }}">Rented Cars</a>
           </li>
-          {% endif %}
+         
         </ul>
       </div>
     </div>

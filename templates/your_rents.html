@@ -7,8 +7,8 @@
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
           <div class="site-heading">
-            <h1>Car Renting</h1>
-            <span class="subheading">Rent Your Car!</span>
+            <h1>Cars Rented</h1>
+            <span class="subheading">By You</span>
           </div>
         </div>
       </div>
@@ -19,26 +19,29 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-8 col-md-10 mx-auto">
-        {% for car in all_cars %}
+        {% if not current_user.reservations.exists %}
+          <div class="post-preview">
+            <a href="{{ url_for('get_all_cars')}}">
+              <h2 style="margin: 0" class="post-title">
+                Go rent a car!
+              </h2>
+            </a>
+        </div>
+        {% endif %}
+        {% for reservation in current_user.reservations %}
         <div class="post-preview">
-          <a href="{{ url_for('show_post', car_id=car.id) }}">
+          <a href="{{ url_for('show_post', car_id=reservation.car.id) }}">
             <h2 class="post-title">
-              {{car.mark}}
+              {{reservation.car.model}}
             </h2>
             <h3 class="post-subtitle">
-              {{car.model}}
+              {{reservation.car.model}}
             </h3>
           </a>
-          <p class="post-meta">Posted by
-            <a href="#">{{car.owner.name}}</a>
-            on {{car.date}}
-          {% if admin: %}
-            <a href="{{url_for('delete_post', car_id=car.id) }}">✘</a>
-          {% endif %}
-          <a href="#">{{car.img_url}}</a>
+          <p class="post-meta">
+            Owner <a>{{reservation.car.owner.name}}</a><br>
+            Rented by <a>you! ({{current_user.name}})</a>
           </p>
-
-          <img src="{{car.img_url}}" alt="car" width="499" height="300">
         </div>
         <hr>
         {% endfor %}
@@ -47,7 +50,7 @@
         <!-- New Post -->
         <div class="clearfix">
           {% if admin: %}
-            <a class="btn btn-primary float-right" href="{{url_for('add_new_post')}}">Upload New Car</a>
+            <a class="btn btn-primary float-right" href="{{url_for('add_new_post')}}">Create New Post</a>
           {% endif %}
         </div>
       </div>
