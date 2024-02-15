@@ -271,7 +271,6 @@ def rented():
 
 # Route to add a new car post
 @app.route("/new-post", methods=['GET', 'POST'])
-
 def add_new_post():
     form = CreateCarForm()
     if form.validate_on_submit():
